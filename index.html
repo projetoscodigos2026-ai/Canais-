@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SatIA TV</title>
+  <title>DB TV</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#060810">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="DB TV">
+  <link rel="apple-touch-icon" href="icon.jpg">
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script src="channels.js"></script>
   <style>
@@ -28,33 +34,40 @@
     .search-wrap input::placeholder { color:var(--muted); }
     .search-clear { background:none; border:none; color:var(--muted); font-size:18px; cursor:pointer; padding:4px; display:none; }
 
-    .player-section { background:#000; position:relative; }
+    /* PLAYER */
+    .player-section { background:#000; position:relative; user-select:none; }
     #videoPlayer { width:100%; max-height:240px; display:block; background:#000; }
-    .player-overlay { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent,rgba(0,0,0,0.85)); padding:10px 14px 8px; pointer-events:none; }
+    .player-overlay { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent,rgba(0,0,0,0.9)); padding:10px 14px 8px; pointer-events:none; }
     .now-playing-label { font-size:10px; color:var(--accent); letter-spacing:1px; text-transform:uppercase; font-weight:600; }
     .now-playing-name { font-size:15px; font-weight:600; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .player-placeholder { width:100%; height:180px; background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; color:var(--muted); }
+    .player-placeholder { width:100%; height:200px; background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; color:var(--muted); }
     .player-placeholder .icon { font-size:38px; opacity:0.4; }
-    .player-placeholder p { font-size:14px; }
 
-    .ai-banner { display:none; margin:10px 14px; padding:10px 14px; background:rgba(0,229,255,0.06); border:1px solid rgba(0,229,255,0.15); border-radius:10px; font-size:13px; color:var(--text); line-height:1.5; }
+    /* SWIPE HINT */
+    .swipe-hint { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.7); color:#fff; padding:8px 16px; border-radius:20px; font-size:13px; opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:10; }
+    .swipe-hint.show { opacity:1; }
+
+    /* NAVEGAÇÃO DE CANAL */
+    .channel-nav { display:flex; gap:8px; padding:8px 14px; background:var(--surface); border-bottom:1px solid var(--border); }
+    .nav-btn { flex:1; padding:9px; border-radius:10px; border:1px solid var(--border); background:var(--surface2); color:var(--text); font-size:14px; cursor:pointer; font-family:var(--font); display:flex; align-items:center; justify-content:center; gap:6px; }
+    .nav-btn:active { background:rgba(0,229,255,0.1); }
+
+    .ai-banner { display:none; margin:8px 14px; padding:10px 14px; background:rgba(0,229,255,0.06); border:1px solid rgba(0,229,255,0.15); border-radius:10px; font-size:13px; color:var(--text); line-height:1.5; }
     .ai-banner.show { display:flex; gap:10px; align-items:flex-start; }
-    .ai-banner .ai-icon { font-size:18px; flex-shrink:0; margin-top:1px; }
 
-    .load-section { padding:10px 14px; display:flex; gap:8px; }
+    .load-section { padding:8px 14px; display:flex; gap:8px; }
     .btn-load { flex:1; padding:10px; border-radius:10px; border:1px solid var(--border); background:var(--surface2); color:var(--text); font-size:13px; cursor:pointer; font-family:var(--font); display:flex; align-items:center; justify-content:center; gap:6px; }
     .btn-load:active { background:rgba(0,229,255,0.1); }
 
     .cats-scroll { display:flex; overflow-x:auto; gap:8px; padding:10px 14px; scrollbar-width:none; }
     .cats-scroll::-webkit-scrollbar { display:none; }
-    .cat-tab { flex-shrink:0; padding:8px 14px; border-radius:20px; font-size:13px; font-weight:500; border:1px solid var(--border); background:var(--surface2); color:var(--muted); cursor:pointer; white-space:nowrap; transition:all 0.15s; }
+    .cat-tab { flex-shrink:0; padding:8px 14px; border-radius:20px; font-size:13px; font-weight:500; border:1px solid var(--border); background:var(--surface2); color:var(--muted); cursor:pointer; white-space:nowrap; }
     .cat-tab.active { background:linear-gradient(90deg,var(--accent),var(--accent2)); border-color:transparent; color:#fff; font-weight:600; }
 
     .channels-section { padding:0 14px 100px; }
-    .cat-group { margin-bottom:6px; }
     .cat-group-title { font-size:12px; font-weight:600; color:var(--muted); letter-spacing:0.8px; text-transform:uppercase; padding:14px 0 8px; }
 
-    .channel-item { display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:12px; margin-bottom:4px; cursor:pointer; background:var(--surface2); border:1px solid transparent; }
+    .channel-item { display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:12px; margin-bottom:4px; cursor:pointer; background:var(--surface2); border:1px solid transparent; transition:background 0.1s; }
     .channel-item:active { background:rgba(0,229,255,0.07); }
     .channel-item.playing { background:rgba(0,229,255,0.08); border-color:rgba(0,229,255,0.25); }
 
@@ -69,7 +82,6 @@
 
     .empty-state { display:none; flex-direction:column; align-items:center; padding:50px 20px; color:var(--muted); gap:10px; text-align:center; }
     .empty-state .icon { font-size:36px; opacity:0.3; }
-
     .loading-bar { padding:14px 18px; display:flex; align-items:center; gap:10px; font-size:13px; color:var(--muted); }
     .spin { animation:spin 1s linear infinite; display:inline-block; }
     @keyframes spin { to { transform:rotate(360deg); } }
@@ -80,7 +92,7 @@
 <header class="header">
   <div class="logo">
     <div class="logo-icon">📺</div>
-    <span class="logo-text">SatIA TV</span>
+    <span class="logo-text">DB TV</span>
   </div>
   <span class="header-badge">IA • IPTV</span>
 </header>
@@ -93,6 +105,7 @@
   </div>
 </div>
 
+<!-- PLAYER -->
 <div class="player-section" id="playerSection">
   <div class="player-placeholder" id="playerPlaceholder">
     <div class="icon">📡</div>
@@ -103,10 +116,17 @@
     <div class="now-playing-label">▶ Reproduzindo</div>
     <div class="now-playing-name" id="nowPlayingName">—</div>
   </div>
+  <div class="swipe-hint" id="swipeHint"></div>
+</div>
+
+<!-- NAVEGAÇÃO ANTERIOR/PRÓXIMO -->
+<div class="channel-nav">
+  <button class="nav-btn" onclick="prevChannel()">⬅ Anterior</button>
+  <button class="nav-btn" onclick="nextChannel()">Próximo ➡</button>
 </div>
 
 <div class="ai-banner" id="aiBanner">
-  <span class="ai-icon">🧠</span>
+  <span>🧠</span>
   <span id="aiText"></span>
 </div>
 
@@ -130,48 +150,57 @@
 
 <script>
 const PROXY = "https://proxy-iptv.projetoscodigos2026.workers.dev/?url=";
-
-// Fontes de canais abertos brasileiros (iptv-org - atualizado diariamente)
 const OPEN_SOURCES = [
   "https://iptv-org.github.io/iptv/countries/bra.m3u",
   "https://iptv-org.github.io/iptv/languages/por.m3u"
 ];
 
-let currentHls    = null;
-let currentUrl    = '';
-let currentCat    = 'abertos';
-let openChannels  = [];
-let externalChannels = [];
+let currentHls      = null;
+let currentIndex    = -1;   // índice na lista plana atual
+let currentCat      = 'abertos';
+let openChannels    = [];
+let externalChannels= [];
+let flatList        = [];   // lista plana usada no momento (para prev/next e swipe)
 
-// ── INIT ──────────────────────────────────────────
+// SWIPE
+let touchStartX = 0;
+const playerSection = document.getElementById('playerSection');
+playerSection.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
+playerSection.addEventListener('touchend', e => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) {
+    if (diff > 0) nextChannel();
+    else prevChannel();
+  }
+}, {passive:true});
+
+// INIT
 document.addEventListener('DOMContentLoaded', () => {
   buildCategoryTabs();
   renderChannels('abertos');
   loadOpenChannels();
 });
 
-// ── TABS ──────────────────────────────────────────
+// TABS
 function buildCategoryTabs() {
   const scroll = document.getElementById('catsScroll');
-
   const tabs = [
-    { id:'abertos',        label:'📡 Abertos' },
-    { id:'esportes',       label:'⚽ Esportes' },
-    { id:'filmes',         label:'🎬 Filmes' },
-    { id:'noticias',       label:'📰 Notícias' },
-    { id:'entretenimento', label:'🎭 Entretenimento' },
-    { id:'documentario',   label:'🔬 Documentário' },
-    { id:'infantil',       label:'🧒 Infantil' },
-    { id:'religioso',      label:'✝️ Religioso' },
-    { id:'externos',       label:'📥 Importados' },
+    {id:'abertos',label:'📡 Abertos'},
+    {id:'esportes',label:'⚽ Esportes'},
+    {id:'filmes',label:'🎬 Filmes'},
+    {id:'noticias',label:'📰 Notícias'},
+    {id:'entretenimento',label:'🎭 Entretenimento'},
+    {id:'documentario',label:'🔬 Documentário'},
+    {id:'infantil',label:'🧒 Infantil'},
+    {id:'religioso',label:'✝️ Religioso'},
+    {id:'externos',label:'📥 Importados'},
   ];
-
-  tabs.forEach((t, i) => {
+  tabs.forEach((t,i) => {
     const btn = document.createElement('div');
-    btn.className = 'cat-tab' + (i === 0 ? ' active' : '');
+    btn.className = 'cat-tab'+(i===0?' active':'');
     btn.dataset.cat = t.id;
     btn.textContent = t.label;
-    if (t.id === 'externos') { btn.id = 'tabExternos'; btn.style.display = 'none'; }
+    if(t.id==='externos'){btn.id='tabExternos';btn.style.display='none';}
     btn.onclick = () => selectCat(t.id);
     scroll.appendChild(btn);
   });
@@ -179,266 +208,259 @@ function buildCategoryTabs() {
 
 function selectCat(id) {
   currentCat = id;
-  document.querySelectorAll('.cat-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === id));
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.toggle('active', t.dataset.cat===id));
   clearSearch();
   renderChannels(id);
 }
 
-// ── CANAIS ABERTOS (iptv-org) ─────────────────────
+// CANAIS ABERTOS
 async function loadOpenChannels() {
-  document.getElementById('loadingBar').style.display = 'flex';
+  document.getElementById('loadingBar').style.display='flex';
   openChannels = [];
-
-  for (const src of OPEN_SOURCES) {
-    try {
-      const res  = await fetch(PROXY + encodeURIComponent(src));
+  for(const src of OPEN_SOURCES){
+    try{
+      const res  = await fetch(PROXY+encodeURIComponent(src));
       const text = await res.text();
       const parsed = parseM3UText(text, true);
-      // Evita duplicatas pelo nome
       parsed.forEach(ch => {
-        if (!openChannels.find(x => x.name.toLowerCase() === ch.name.toLowerCase())) {
+        if(!openChannels.find(x=>x.name.toLowerCase()===ch.name.toLowerCase()))
           openChannels.push(ch);
-        }
       });
-    } catch(e) { console.warn('Erro ao carregar', src, e); }
+    }catch(e){console.warn(e);}
   }
-
-  document.getElementById('loadingBar').style.display = 'none';
-
-  if (currentCat === 'abertos') renderChannels('abertos');
-
-  showAiMsg(`✅ ${openChannels.length} canais abertos carregados e atualizados!`);
+  document.getElementById('loadingBar').style.display='none';
+  if(currentCat==='abertos') renderChannels('abertos');
+  showAiMsg(`✅ ${openChannels.length} canais abertos carregados!`);
 }
 
-// ── RENDER ────────────────────────────────────────
+// RENDER
 function renderChannels(catId, searchTerm) {
   const section = document.getElementById('channelsSection');
   const empty   = document.getElementById('emptyState');
-  // Limpa mantendo o empty state
-  Array.from(section.children).forEach(c => { if (c !== empty) c.remove(); });
-  empty.style.display = 'none';
+  Array.from(section.children).forEach(c => { if(c!==empty) c.remove(); });
+  empty.style.display='none';
 
-  let groups = [];
+  let channels = [];
 
-  if (searchTerm) {
+  if(searchTerm){
     const term = searchTerm.toLowerCase();
-    const all  = getAllFlat();
-    const found = all.filter(c => c.name.toLowerCase().includes(term));
-    if (!found.length) { empty.style.display = 'flex'; return; }
-    groups = [{ label: `${found.length} resultado(s)`, channels: found }];
-
-  } else if (catId === 'abertos') {
-    if (!openChannels.length) {
-      groups = [{ label: '📡 Canais Abertos', channels: [] }];
-    } else {
-      groups = [{ label: `📡 Canais Abertos (${openChannels.length})`, channels: openChannels }];
+    channels = getAllFlat().filter(c=>c.name.toLowerCase().includes(term));
+    if(!channels.length){empty.style.display='flex';return;}
+  } else if(catId==='abertos'){
+    channels = openChannels;
+    if(!channels.length){
+      const msg=document.createElement('div');
+      msg.className='loading-bar';
+      msg.innerHTML='<span class="spin">⏳</span> Carregando...';
+      section.appendChild(msg); return;
     }
-
-  } else if (catId === 'externos') {
-    if (!externalChannels.length) { empty.style.display = 'flex'; return; }
-    groups = [{ label: '📥 Importados', channels: externalChannels }];
-
+  } else if(catId==='externos'){
+    channels = externalChannels;
+    if(!channels.length){empty.style.display='flex';return;}
   } else {
-    const cat = CHANNEL_CATEGORIES.find(c => c.id === catId);
-    if (!cat) { empty.style.display = 'flex'; return; }
-    groups = [{ label: cat.label, channels: cat.channels }];
+    const cat = CHANNEL_CATEGORIES.find(c=>c.id===catId);
+    channels = cat ? cat.channels : [];
+    if(!channels.length){empty.style.display='flex';return;}
   }
 
-  groups.forEach(group => {
-    if (!group.channels.length) {
-      const msg = document.createElement('div');
-      msg.className = 'loading-bar';
-      msg.innerHTML = '<span class="spin">⏳</span> Aguardando canais...';
-      section.appendChild(msg);
-      return;
-    }
-    const wrapper = document.createElement('div');
-    wrapper.className = 'cat-group';
-    const title = document.createElement('div');
-    title.className = 'cat-group-title';
-    title.textContent = group.label;
-    wrapper.appendChild(title);
-    group.channels.forEach(ch => wrapper.appendChild(makeChannelItem(ch)));
-    section.appendChild(wrapper);
-  });
+  // Atualiza lista plana para prev/next/swipe
+  flatList = channels;
+
+  const label = searchTerm
+    ? `${channels.length} resultado(s)`
+    : catId==='abertos' ? `📡 Canais Abertos (${channels.length})`
+    : catId==='externos' ? '📥 Importados'
+    : CHANNEL_CATEGORIES.find(c=>c.id===catId)?.label || catId;
+
+  const wrapper = document.createElement('div');
+  const title   = document.createElement('div');
+  title.className='cat-group-title'; title.textContent=label;
+  wrapper.appendChild(title);
+
+  channels.forEach((ch, i) => wrapper.appendChild(makeChannelItem(ch, i)));
+  section.appendChild(wrapper);
 }
 
-function getAllFlat() {
-  let all = [...openChannels];
-  CHANNEL_CATEGORIES.forEach(cat => all.push(...cat.channels));
-  all.push(...externalChannels);
-  return all;
+function getAllFlat(){
+  return [...openChannels, ...CHANNEL_CATEGORIES.flatMap(c=>c.channels), ...externalChannels];
 }
 
-function makeChannelItem(ch) {
-  const is4k  = ch.name.includes('4K') || ch.name.includes('4k');
-  const isLive = ch.isLive;
+function makeChannelItem(ch, index) {
+  const is4k  = ch.name.includes('4K')||ch.name.includes('4k');
   const item  = document.createElement('div');
-  item.className = 'channel-item' + (ch.url === currentUrl ? ' playing' : '');
-  item.onclick   = () => playChannel(ch);
+  item.className = 'channel-item'+(currentIndex===index&&ch.url===currentUrl?' playing':'');
+  item.dataset.index = index;
+  item.onclick = () => playChannel(ch, index);
 
   let logoEl;
-  if (ch.logo) {
-    logoEl = document.createElement('img');
-    logoEl.className = 'ch-logo';
-    logoEl.src = ch.logo;
-    logoEl.alt = ch.name;
-    logoEl.onerror = () => logoEl.replaceWith(makeLogoPlaceholder(ch.name));
-  } else {
-    logoEl = makeLogoPlaceholder(ch.name);
-  }
+  if(ch.logo){
+    logoEl=document.createElement('img');
+    logoEl.className='ch-logo'; logoEl.src=ch.logo; logoEl.alt=ch.name;
+    logoEl.onerror=()=>logoEl.replaceWith(makeLogoPlaceholder(ch.name));
+  } else { logoEl=makeLogoPlaceholder(ch.name); }
 
-  const info = document.createElement('div');
-  info.className = 'ch-info';
-  const name = document.createElement('div');
-  name.className = 'ch-name';
-  name.textContent = ch.name;
+  const info=document.createElement('div'); info.className='ch-info';
+  const name=document.createElement('div'); name.className='ch-name'; name.textContent=ch.name;
   info.appendChild(name);
 
-  const playBtn = document.createElement('div');
-  playBtn.className = 'ch-play-btn';
-  playBtn.textContent = ch.url === currentUrl ? '⏸' : '▶';
+  const playBtn=document.createElement('div');
+  playBtn.className='ch-play-btn';
+  playBtn.textContent=(currentIndex===index)?'⏸':'▶';
 
-  item.appendChild(logoEl);
-  item.appendChild(info);
-  if (is4k) {
-    const b = document.createElement('span');
-    b.className = 'ch-4k'; b.textContent = '4K';
-    item.appendChild(b);
-  }
-  if (isLive) {
-    const b = document.createElement('span');
-    b.className = 'ch-live'; b.textContent = '🔴 AO VIVO';
-    item.appendChild(b);
-  }
+  item.appendChild(logoEl); item.appendChild(info);
+  if(is4k){const b=document.createElement('span');b.className='ch-4k';b.textContent='4K';item.appendChild(b);}
+  if(ch.isLive){const b=document.createElement('span');b.className='ch-live';b.textContent='🔴 AO VIVO';item.appendChild(b);}
   item.appendChild(playBtn);
   return item;
 }
 
-function makeLogoPlaceholder(name) {
-  const el = document.createElement('div');
-  el.className = 'ch-logo-placeholder';
-  el.textContent = (name || '?').charAt(0).toUpperCase();
+function makeLogoPlaceholder(name){
+  const el=document.createElement('div');
+  el.className='ch-logo-placeholder';
+  el.textContent=(name||'?').charAt(0).toUpperCase();
   return el;
 }
 
 // ── PLAYER ────────────────────────────────────────
-function playChannel(ch) {
-  currentUrl = ch.url;
+let currentUrl = '';
 
-  document.getElementById('playerPlaceholder').style.display = 'none';
-  document.getElementById('playerOverlay').style.display     = 'block';
-  document.getElementById('nowPlayingName').textContent       = ch.name;
-
-  const video = document.getElementById('videoPlayer');
-  video.style.display = 'block';
-
-  if (currentHls) { currentHls.destroy(); currentHls = null; }
-
-  const url = ch.url;
-
-  if (Hls.isSupported() && (url.includes('.m3u8') || !url.includes('.ts'))) {
-    currentHls = new Hls({ enableWorker:true, lowLatencyMode:true });
-    currentHls.loadSource(url);
-    currentHls.attachMedia(video);
-    currentHls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(()=>{}));
-    currentHls.on(Hls.Events.ERROR, (_, d) => { if (d.fatal) showAiMsg(`⚠️ ${ch.name} não respondeu. Tente outro canal.`); });
-  } else if (video.canPlayType('application/vnd.apple.mpegurl') && url.includes('.m3u8')) {
-    video.src = url; video.play().catch(()=>{});
-  } else {
-    video.src = url; video.play().catch(()=>{});
-  }
-
-  showAiMsg(`<b>${ch.name}</b> — ${url.includes('.ts') ? 'MPEG-TS' : 'HLS'} ${(ch.name.includes('4K')||ch.name.includes('4k')) ? '· <span style="color:var(--accent)">4K</span>' : ''}<br><span style="color:var(--muted);font-size:12px;">via proxy seguro ✓</span>`);
-
+function playChannel(ch, index) {
+  // Reset TODOS os itens primeiro
   document.querySelectorAll('.channel-item').forEach(el => {
     el.classList.remove('playing');
-    const n = el.querySelector('.ch-name');
-    if (n && n.textContent === ch.name) {
-      el.classList.add('playing');
-      const b = el.querySelector('.ch-play-btn');
-      if (b) b.textContent = '⏸';
-    }
+    const btn = el.querySelector('.ch-play-btn');
+    if(btn) btn.textContent = '▶';
   });
+
+  currentUrl   = ch.url;
+  currentIndex = index ?? flatList.findIndex(c=>c.url===ch.url);
+
+  // Marca só o atual
+  const items = document.querySelectorAll('.channel-item');
+  if(items[currentIndex]){
+    items[currentIndex].classList.add('playing');
+    const btn = items[currentIndex].querySelector('.ch-play-btn');
+    if(btn) btn.textContent = '⏸';
+  }
+
+  document.getElementById('playerPlaceholder').style.display='none';
+  document.getElementById('playerOverlay').style.display='block';
+  document.getElementById('nowPlayingName').textContent=ch.name;
+
+  const video = document.getElementById('videoPlayer');
+  video.style.display='block';
+
+  if(currentHls){currentHls.destroy();currentHls=null;}
+
+  const url = ch.url;
+  if(Hls.isSupported()&&!url.includes('.ts')){
+    currentHls=new Hls({enableWorker:true,lowLatencyMode:true});
+    currentHls.loadSource(url);
+    currentHls.attachMedia(video);
+    currentHls.on(Hls.Events.MANIFEST_PARSED,()=>video.play().catch(()=>{}));
+    currentHls.on(Hls.Events.ERROR,(_,d)=>{if(d.fatal)showAiMsg(`⚠️ ${ch.name} não respondeu. Tente outro canal.`);});
+  } else {
+    video.src=url; video.play().catch(()=>{});
+  }
+
+  showAiMsg(`<b>${ch.name}</b> — ${url.includes('.ts')?'MPEG-TS':'HLS'}${ch.name.includes('4K')?' · <span style="color:var(--accent)">4K</span>':''}<br><span style="color:var(--muted);font-size:12px;">via proxy seguro ✓</span>`);
 }
 
-function showAiMsg(html) {
-  const banner = document.getElementById('aiBanner');
-  document.getElementById('aiText').innerHTML = html;
-  banner.classList.add('show');
+function nextChannel(){
+  if(!flatList.length) return;
+  const next = (currentIndex+1) % flatList.length;
+  playChannel(flatList[next], next);
+  showSwipeHint('▶▶ Próximo');
+  scrollToChannel(next);
 }
 
-// ── BUSCA ─────────────────────────────────────────
-function onSearch(val) {
-  document.getElementById('searchClear').style.display = val ? 'block' : 'none';
-  val ? renderChannels(null, val) : renderChannels(currentCat);
+function prevChannel(){
+  if(!flatList.length) return;
+  const prev = (currentIndex-1+flatList.length) % flatList.length;
+  playChannel(flatList[prev], prev);
+  showSwipeHint('◀◀ Anterior');
+  scrollToChannel(prev);
 }
-function clearSearch() {
-  document.getElementById('searchInput').value = '';
-  document.getElementById('searchClear').style.display = 'none';
+
+function scrollToChannel(index){
+  const items = document.querySelectorAll('.channel-item');
+  if(items[index]) items[index].scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function showSwipeHint(txt){
+  const hint = document.getElementById('swipeHint');
+  hint.textContent = txt;
+  hint.classList.add('show');
+  setTimeout(()=>hint.classList.remove('show'), 1000);
+}
+
+function showAiMsg(html){
+  document.getElementById('aiText').innerHTML=html;
+  document.getElementById('aiBanner').classList.add('show');
+}
+
+// BUSCA
+function onSearch(val){
+  document.getElementById('searchClear').style.display=val?'block':'none';
+  val?renderChannels(null,val):renderChannels(currentCat);
+}
+function clearSearch(){
+  document.getElementById('searchInput').value='';
+  document.getElementById('searchClear').style.display='none';
   renderChannels(currentCat);
 }
 
-// ── PLAYLIST EXTERNA ──────────────────────────────
-function loadRemotePlaylist() {
-  const url = prompt('Cole a URL da playlist M3U:');
-  if (!url) return;
+// PLAYLIST EXTERNA
+function loadRemotePlaylist(){
+  const url=prompt('Cole a URL da playlist M3U:');
+  if(!url)return;
   fetchAndParse(url);
 }
-function loadLocalFile() {
-  const input = document.createElement('input');
-  input.type = 'file'; input.accept = '.m3u,.m3u8';
-  input.onchange = e => {
-    const r = new FileReader();
-    r.onload = ev => { externalChannels = parseM3UText(ev.target.result, false); showExternal(); };
+function loadLocalFile(){
+  const input=document.createElement('input');
+  input.type='file';input.accept='.m3u,.m3u8';
+  input.onchange=e=>{
+    const r=new FileReader();
+    r.onload=ev=>{externalChannels=parseM3UText(ev.target.result,false);showExternal();};
     r.readAsText(e.target.files[0]);
   };
   input.click();
 }
-async function fetchAndParse(url) {
+async function fetchAndParse(url){
   showAiMsg('⏳ Carregando playlist...');
-  try {
-    const res  = await fetch(PROXY + encodeURIComponent(url));
-    const text = await res.text();
-    externalChannels = parseM3UText(text, false);
+  try{
+    const res=await fetch(PROXY+encodeURIComponent(url));
+    const text=await res.text();
+    externalChannels=parseM3UText(text,false);
     showExternal();
-  } catch { showAiMsg('⚠️ Não foi possível carregar a URL.'); }
+  }catch{showAiMsg('⚠️ Não foi possível carregar.');}
 }
-function showExternal() {
-  const t = document.getElementById('tabExternos');
-  if (t) t.style.display = 'block';
+function showExternal(){
+  const t=document.getElementById('tabExternos');
+  if(t)t.style.display='block';
   selectCat('externos');
   showAiMsg(`✅ ${externalChannels.length} canais importados!`);
 }
 
-// ── PARSER M3U ────────────────────────────────────
-function parseM3UText(data, wrapProxy) {
-  const result = [];
-  const lines  = data.split('\n');
-  let current  = {};
-  for (const raw of lines) {
-    const line = raw.trim();
-    if (line.startsWith('#EXTINF:')) {
-      const logoMatch  = line.match(/tvg-logo="([^"]+)"/);
-      const groupMatch = line.match(/group-title="([^"]+)"/);
-      const name = line.split(',').pop().trim();
-      current = {
-        name,
-        logo:  logoMatch  ? logoMatch[1]  : '',
-        group: groupMatch ? groupMatch[1] : '',
-        isLive: true
-      };
-    } else if (line && !line.startsWith('#') && current.name) {
-      let url = line;
-      if (wrapProxy && url.startsWith('http://')) {
-        url = PROXY + encodeURIComponent(url);
-      }
-      current.url = url;
-      result.push({ ...current });
-      current = {};
+// PARSER M3U
+function parseM3UText(data, wrapProxy){
+  const result=[]; const lines=data.split('\n'); let cur={};
+  for(const raw of lines){
+    const line=raw.trim();
+    if(line.startsWith('#EXTINF:')){
+      const logo=line.match(/tvg-logo="([^"]+)"/);
+      cur={name:line.split(',').pop().trim(),logo:logo?logo[1]:'',isLive:true};
+    } else if(line&&!line.startsWith('#')&&cur.name){
+      cur.url=wrapProxy&&line.startsWith('http://')?PROXY+encodeURIComponent(line):line;
+      result.push({...cur}); cur={};
     }
   }
   return result;
+}
+</script>
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js").then(()=>console.log("SW OK")).catch(e=>console.warn(e));
 }
 </script>
 </body>
