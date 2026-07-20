@@ -186,6 +186,8 @@ function buildCategoryTabs() {
   const scroll = document.getElementById('catsScroll');
   const tabs = [
     {id:'abertos',label:'📡 Abertos'},
+    {id:'premium_br',label:'💎 Premium 4K'},
+    {id:'abertos_br',label:'📡 Abertos BR'},
     {id:'esportes',label:'⚽ Esportes'},
     {id:'filmes',label:'🎬 Filmes'},
     {id:'noticias',label:'📰 Notícias'},
@@ -193,6 +195,8 @@ function buildCategoryTabs() {
     {id:'documentario',label:'🔬 Documentário'},
     {id:'infantil',label:'🧒 Infantil'},
     {id:'religioso',label:'✝️ Religioso'},
+    {id:'musica',label:'🎵 Música'},
+    {id:'internacional',label:'🌎 Internacional'},
     {id:'externos',label:'📥 Importados'},
   ];
   tabs.forEach((t,i) => {
@@ -465,3 +469,98 @@ if("serviceWorker" in navigator){
 </script>
 </body>
 </html>
+
+<!-- INJEÇÃO: Suporte a playlists salvas -->
+<script src="playlists.js"></script>
+<script>
+// Adiciona tab "Minhas Listas" e funcionalidade
+(function() {
+  // Adiciona tab
+  const scroll = document.getElementById('catsScroll');
+  const btn = document.createElement('div');
+  btn.className = 'cat-tab';
+  btn.dataset.cat = 'minhas_listas';
+  btn.textContent = '📋 Minhas Listas';
+  btn.onclick = () => showPlaylists();
+  scroll.insertBefore(btn, scroll.firstChild);
+
+  window.showPlaylists = function() {
+    // Marca tab ativa
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+
+    const section = document.getElementById('channelsSection');
+    const empty = document.getElementById('emptyState');
+    Array.from(section.children).forEach(c => { if(c !== empty) c.remove(); });
+    empty.style.display = 'none';
+
+    const title = document.createElement('div');
+    title.className = 'cat-group-title';
+    title.textContent = '📋 Minhas Listas Salvas';
+    section.appendChild(title);
+
+    const hoje = new Date();
+
+    (window.SAVED_PLAYLISTS || []).forEach(pl => {
+      // Calcula dias restantes
+      const parts = pl.exp.split('/');
+      const expDate = new Date(parts[2], parts[1]-1, parts[0]);
+      const dias = Math.ceil((expDate - hoje) / (1000*60*60*24));
+      const expirou = dias < 0;
+      const urgente = dias >= 0 && dias <= 30;
+
+      const card = document.createElement('div');
+      card.style.cssText = 'background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;';
+      if(expirou) card.style.opacity = '0.5';
+
+      const statusColor = expirou ? '#ff3b5c' : urgente ? '#ff9500' : '#30d158';
+      const statusTxt = expirou ? '❌ Vencida' : urgente ? `⚠️ ${dias} dias` : `✅ ${dias} dias`;
+
+      card.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <span style="font-size:24px;">${pl.icon}</span>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:600;">${pl.name}</div>
+            <div style="font-size:11px;color:var(--muted);">${pl.server}</div>
+          </div>
+          <span style="font-size:11px;font-weight:600;color:${statusColor};background:${statusColor}22;padding:3px 8px;border-radius:10px;">${statusTxt}</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${pl.info}</div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="loadPlaylistById('${pl.id}')" style="flex:1;padding:9px;background:linear-gradient(90deg,var(--accent),var(--accent2));border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;"${expirou?' disabled':''}>
+            ▶ Carregar e Assistir
+          </button>
+        </div>
+      `;
+      section.appendChild(card);
+    });
+  };
+
+  window.loadPlaylistById = async function(id) {
+    const pl = (window.SAVED_PLAYLISTS || []).find(p => p.id === id);
+    if(!pl) return;
+
+    const PROXY = "https://proxy-iptv.projetoscodigos2026.workers.dev/?url=";
+    showAiMsg('⏳ Carregando ' + pl.name + '...');
+
+    try {
+      const proxyUrl = PROXY + encodeURIComponent(pl.url);
+      const res = await fetch(proxyUrl);
+      const text = await res.text();
+
+      if(!text.includes('#EXTINF')) {
+        showAiMsg('⚠️ ' + pl.name + ' não respondeu. Servidor pode estar offline.');
+        return;
+      }
+
+      externalChannels = parseM3UText(text, false);
+      const tabExt = document.getElementById('tabExternos');
+      if(tabExt) { tabExt.style.display = 'block'; tabExt.textContent = '📥 ' + pl.name; }
+      selectCat('externos');
+      showAiMsg('✅ <b>' + pl.name + '</b> — ' + externalChannels.length + ' canais carregados! Vence: ' + pl.exp);
+    } catch(e) {
+      showAiMsg('⚠️ Erro ao carregar ' + pl.name + ': ' + e.message);
+    }
+  };
+})();
+</script>
