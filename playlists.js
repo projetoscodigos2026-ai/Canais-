@@ -8,7 +8,7 @@ const SAVED_PLAYLISTS = [
     icon: '💎',
     exp: '19/04/2027',
     server: 'blue4k.xyz',
-    url: 'http://blue4k.xyz:8880/get.php?username=EmirAl-jumaily&password=aGI05gaOUZ&type=m3u_plus',
+    url: 'https://blue4k.xyz:8880/get.php?username=EmirAl-jumaily&password=aGI05gaOUZ&type=m3u_plus',
     info: '7000+ canais • Filmes • Séries'
   },
   {
@@ -17,7 +17,7 @@ const SAVED_PLAYLISTS = [
     icon: '📡',
     exp: '11/03/2027',
     server: 'ipc.proipciptv.com',
-    url: 'http://ipc.proipciptv.com:8000/get.php?username=Hazemalayan2&password=v9ESWHAFyGte&type=m3u_plus',
+    url: 'https://ipc.proipciptv.com:8000/get.php?username=Hazemalayan2&password=v9ESWHAFyGte&type=m3u_plus',
     info: 'Canais ao vivo • VOD'
   },
   {
@@ -26,7 +26,7 @@ const SAVED_PLAYLISTS = [
     icon: '📡',
     exp: '12/04/2027',
     server: 'ipc.proipciptv.com',
-    url: 'http://ipc.proipciptv.com:8000/get.php?username=654654uzuz&password=rew698765&type=m3u_plus',
+    url: 'https://ipc.proipciptv.com:8000/get.php?username=654654uzuz&password=rew698765&type=m3u_plus',
     info: 'Canais ao vivo • VOD'
   },
   {
@@ -35,7 +35,7 @@ const SAVED_PLAYLISTS = [
     icon: '📡',
     exp: '13/02/2027',
     server: 'ipc.proipciptv.com',
-    url: 'http://ipc.proipciptv.com:8000/get.php?username=325465uz&password=tz4552415&type=m3u_plus',
+    url: 'https://ipc.proipciptv.com:8000/get.php?username=325465uz&password=tz4552415&type=m3u_plus',
     info: 'Canais ao vivo • VOD'
   },
   {
@@ -44,7 +44,7 @@ const SAVED_PLAYLISTS = [
     icon: '🎯',
     exp: '28/09/2027',
     server: 'serverinfo.one',
-    url: 'http://serverinfo.one:8080/get.php?username=Tiger123&password=Tiger123&type=m3u_plus',
+    url: 'https://serverinfo.one:8080/get.php?username=Tiger123&password=Tiger123&type=m3u_plus',
     info: 'Multi-idioma • Esportes'
   },
   {
@@ -53,7 +53,7 @@ const SAVED_PLAYLISTS = [
     icon: '🎯',
     exp: '05/12/2026',
     server: 'ktv.im',
-    url: 'http://ktv.im:8080/get.php?username=vZLVqaZqmE&password=uTfWGYyzU3&type=m3u_plus',
+    url: 'https://ktv.im:8080/get.php?username=vZLVqaZqmE&password=uTfWGYyzU3&type=m3u_plus',
     info: 'Multi-idioma • Esportes'
   },
   {
@@ -62,7 +62,7 @@ const SAVED_PLAYLISTS = [
     icon: '✨',
     exp: '27/07/2026',
     server: 'pro.xviptv.com',
-    url: 'http://pro.xviptv.com/get.php?username=V20wa8vckgb65&password=3ety1LjvwW&type=m3u_plus&output=m3u8',
+    url: 'https://pro.xviptv.com/get.php?username=V20wa8vckgb65&password=3ety1LjvwW&type=m3u_plus&output=m3u8',
     info: '9547 canais • 33175 VOD • 3463 Séries'
   },
   {
@@ -71,7 +71,7 @@ const SAVED_PLAYLISTS = [
     icon: '🔥',
     exp: '07/10/2027',
     server: 'yesimes.oknirvana.club',
-    url: 'http://yesimes.oknirvana.club:8880/get.php?username=D12m2439&password=62229525&type=m3u_plus',
+    url: 'https://yesimes.oknirvana.club:8880/get.php?username=D12m2439&password=62229525&type=m3u_plus',
     info: '7558 canais • 8989 VOD • 417 Séries'
   },
   {
@@ -80,7 +80,7 @@ const SAVED_PLAYLISTS = [
     icon: '🔥',
     exp: '13/06/2027',
     server: 'newlife3.wanicelife.com',
-    url: 'http://newlife3.wanicelife.com:8880/get.php?username=D12m1834&password=22925265&type=m3u_plus',
+    url: 'https://newlife3.wanicelife.com:8880/get.php?username=D12m1834&password=22925265&type=m3u_plus',
     info: '7558 canais • 8989 VOD'
   },
   {
@@ -89,7 +89,7 @@ const SAVED_PLAYLISTS = [
     icon: '🔥',
     exp: '08/05/2027',
     server: 'yesimes.oknirvana.club',
-    url: 'http://yesimes.oknirvana.club:8880/get.php?username=D12m1539&password=79663448&type=m3u_plus',
+    url: 'https://yesimes.oknirvana.club:8880/get.php?username=D12m1539&password=79663448&type=m3u_plus',
     info: '7558 canais • 8989 VOD'
   },
   {
@@ -98,7 +98,7 @@ const SAVED_PLAYLISTS = [
     icon: '🔥',
     exp: '03/05/2027',
     server: 'yesimes.oknirvana.club',
-    url: 'http://yesimes.oknirvana.club:8880/get.php?username=D12m1495&password=23236986&type=m3u_plus',
+    url: 'https://yesimes.oknirvana.club:8880/get.php?username=D12m1495&password=23236986&type=m3u_plus',
     info: '7558 canais • 8989 VOD'
   },
   {
@@ -107,7 +107,7 @@ const SAVED_PLAYLISTS = [
     icon: '🔥',
     exp: '25/02/2027',
     server: 'yesimes.oknirvana.club',
-    url: 'http://yesimes.oknirvana.club:8880/get.php?username=D12m0846&password=702669023&type=m3u_plus',
+    url: 'https://yesimes.oknirvana.club:8880/get.php?username=D12m0846&password=702669023&type=m3u_plus',
     info: '7558 canais • 8989 VOD'
   },
   {
@@ -116,7 +116,7 @@ const SAVED_PLAYLISTS = [
     icon: '🔥',
     exp: '06/01/2027',
     server: 'yesimes.oknirvana.club',
-    url: 'http://yesimes.oknirvana.club:8880/get.php?username=DYJ12M2224&password=8945634583&type=m3u_plus',
+    url: 'https://yesimes.oknirvana.club:8880/get.php?username=DYJ12M2224&password=8945634583&type=m3u_plus',
     info: '7558 canais • 8989 VOD'
   },
   {
@@ -125,7 +125,7 @@ const SAVED_PLAYLISTS = [
     icon: '🔥',
     exp: '21/09/2026',
     server: 'yesimes.oknirvana.club',
-    url: 'http://yesimes.oknirvana.club:8880/get.php?username=29us031901&password=adsf3rdsdc&type=m3u_plus',
+    url: 'https://yesimes.oknirvana.club:8880/get.php?username=29us031901&password=adsf3rdsdc&type=m3u_plus',
     info: '7558 canais • 8989 VOD'
   },
   {
@@ -134,7 +134,7 @@ const SAVED_PLAYLISTS = [
     icon: '⚡',
     exp: '28/02/2027',
     server: 'x.rprotv.com',
-    url: 'http://x.rprotv.com:25443/get.php?username=V18k3wAdAOU4T&password=k82QKpfffK&type=m3u_plus',
+    url: 'https://x.rprotv.com:25443/get.php?username=V18k3wAdAOU4T&password=k82QKpfffK&type=m3u_plus',
     info: 'Multi-idioma • HD'
   },
 ];
